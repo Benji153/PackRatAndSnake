@@ -8,7 +8,7 @@ import java.awt.Rectangle;
 
 public class PackRat {
    
-    public int speed = 3;
+    public int speed = 2;
     public Rectangle bounds;
     public int currentDirection = 0;
     public int currentPellets = 0;
