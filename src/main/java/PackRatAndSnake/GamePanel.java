@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +24,11 @@ public class GamePanel extends JPanel implements Runnable{
     boolean gameRunning = true;
     Thread game;
     PackRat player;
+    ArrayList<Pellet> pellets = new ArrayList();
+    Random random = new Random();
+    int pTimer = 0;
+    int pTime = 100;
+    int score = 0;
     
     public GamePanel(){
         game = new Thread(this);
@@ -76,14 +82,43 @@ public class GamePanel extends JPanel implements Runnable{
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
         draw(g);
+        g.setColor(Color.white);
+        g.drawString("Current Score: " + score, 15, 15);
     }
     
     public void draw(Graphics g){
         player.draw(g);
+        pellets.forEach((p) -> {
+            p.draw(g);
+        });
     }
     
     public void update(){
         player.update();
+        pellets.forEach((p) -> {
+            p.update();
+        });
+        //check if a new pellet should be added to screen
+        if(pTimer<pTime){
+            pTimer++;
+        }else{
+            pTimer=0;
+            addPellet();
+        }
+        
+        //check if player has collided with a pellet
+        for(int i = 0;i<pellets.size();i++){
+            if(player.bounds.intersects(pellets.get(i).bounds)){
+              score++;
+              pellets.remove(i);
+              i--;
+          }  
+        }
+    }
+    
+    public void addPellet(){
+        Pellet p = new Pellet(random.nextInt(this.getWidth()-20)+20,random.nextInt(this.getWidth()-20)+20,10,10);
+        pellets.add(p);
     }
     
 }
